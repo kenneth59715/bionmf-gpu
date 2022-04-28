@@ -356,15 +356,15 @@ static __device__ real real_shfl_xor( real variable, index_t laneMask )
 		#if NMFGPU_SINGLE_PREC
 
 			/* Single Precision */
-			value = __shfl_xor( variable, laneMask );
+			value = __shfl_xor_sync( 0xffffffff, variable, laneMask );
 
 		#else	/* Double Precision */
 
 			int val_hi = __double2hiint( variable );
 			int val_lo = __double2loint( variable );
 
-			val_hi = __shfl_xor( val_hi, laneMask );
-			val_lo = __shfl_xor( val_lo, laneMask );
+			val_hi = __shfl_xor_sync( 0xffffffff, val_hi, laneMask );
+			val_lo = __shfl_xor_sync( 0xffffffff, val_lo, laneMask );
 
 			value = __hiloint2double( val_hi, val_lo );
 		#endif
@@ -3072,7 +3072,7 @@ static __device__ void idx_max_shmem( real *__restrict__ max_val, index_t *__res
 			for ( index_t half = (warpSize >> 1) ; half > 16 ; half >>= 1 ) {
 
 				real const val = real_shfl_xor( l_max_val, half );
-				index_t const idx = (index_t) __shfl_xor( (int) l_max_val_idx, (int) half );
+				index_t const idx = (index_t) __shfl_xor_sync(0xffffffff, (int) l_max_val_idx, (int) half );
 
 				if ( l_max_val < val ) {
 					l_max_val = val;
@@ -3086,7 +3086,7 @@ static __device__ void idx_max_shmem( real *__restrict__ max_val, index_t *__res
 			for ( index_t half = 16 ; half > 0 ; half >>= 1 ) {
 
 				real const val = real_shfl_xor( l_max_val, half );
-				index_t const idx = (index_t) __shfl_xor( (int) l_max_val_idx, (int) half );
+				index_t const idx = (index_t) __shfl_xor_sync(0xffffffff, (int) l_max_val_idx, (int) half );
 
 				if ( l_max_val < val ) {
 					l_max_val = val;

@@ -557,6 +557,11 @@ struct tag_t new_empty_tag( void )
 int generate_tag(char const *restrict token_prefix, char const *restrict token_suffix, index_t t0, index_t num_tokens, struct tag_t *restrict tag)
 {
 
+	#if NMFGPU_DEBUG_READ_FILE2
+	////////////////////////////////
+	print_message( dbg_shown_by_all, "\tStart of generate_tag() with num_tokens %i...\n", num_tokens );
+	////////////////////////////////
+	#endif
 	if ( ( t0 < 0 ) + ( num_tokens <= 0 ) + ( ! tag ) ) {
 		int const errnum = EINVAL;
 		if ( t0 < 0 ) print_errnum( error_shown_by_all, errnum, "generate_tag( t0=%" PRI_IDX " )", t0 );
@@ -592,6 +597,12 @@ int generate_tag(char const *restrict token_prefix, char const *restrict token_s
 	if ( token_suffix )
 		tk_s = token_suffix;
 
+	size_t len_tokens = 0;  // Current length for tokens.
+	for( index_t i = 0, t = t0 ; i < num_tokens ; i++, t++ ) {
+		int const len = printf("%s%" PRI_IDX "%s", tk_p, t, tk_s );
+		len_tokens += ((size_t)len + 1);        // (+1 to include the '\0').
+	} // for 0 <= i < num_tokens.
+
 	// ----------------------------
 
 	/* Roughly estimation of the total length:
@@ -611,12 +622,12 @@ int generate_tag(char const *restrict token_prefix, char const *restrict token_s
 	// ----------------------------
 
 	// Tokens.
-	char *restrict const tokens = (char *restrict) malloc( max_len_tokens * sizeof(char) ); // Size will be adjusted later.
+	char *restrict const tokens = (char *restrict) malloc( len_tokens * sizeof(char) ); // Size will be adjusted later.
 	if ( ! tokens ) {
 		print_errnum( sys_error_shown_by_all, errno, "Error in generate_tag(): malloc( tokens, size=%zu )", max_len_tokens );
 		return EXIT_FAILURE;
 	}
-	size_t len_tokens = 0;	// Current length for tokens.
+	len_tokens = 0;	// Current length for tokens.
 
 
 	// Array of pointers to 'tokens'.
@@ -630,6 +641,12 @@ int generate_tag(char const *restrict token_prefix, char const *restrict token_s
 	// ----------------------------
 
 	// Generates the tokens.
+	// I think each token string length above is without PRI_IDX,
+	// like "Factor_" + NULL, so only 8 chars, then ptokens[i] here
+	// is set to the next token address, based on Factor_t + NULL,
+	// which gets beyond the currently allocated tokens memory.
+	// I guess this C doesn't like that, even though nothing is
+	// read/written with that address, yet, realloc later fails.
 
 	for( index_t i = 0, t = t0 ; i < num_tokens ; i++, t++ ) {
 

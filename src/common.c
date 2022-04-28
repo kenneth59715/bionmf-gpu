@@ -181,6 +181,7 @@ index_t matrix_max_non_padded_dim = (index_t) MIN( (SIZE_MAX / (4* sizeof(real))
 index_t N = 0;		// Number of rows of input matrix V.
 index_t M = 0;		// Number of columns of input matrix V.
 index_t K = 0;		// Factorization rank.
+index_t Seed = NULL;
 
 // Dimensions for multi-process version:
 index_t NpP = 0;	// Number of rows of V assigned to this process (NpP <= N).
@@ -871,6 +872,7 @@ int check_arguments( int argc, char const *restrict *restrict argv, bool *restri
 	file_fmt_t l_output_file_fmt = ASCII_TEXT_FMT;	// Output file format.
 
 	index_t l_k = DEFAULT_K;				// Factorization rank.
+	index_t l_seed = NULL;                          // PRNG seed.
 	index_t l_kp = get_padding( DEFAULT_K );		// (Initial) padded factorization rank.
 	index_t l_nIters = DEFAULT_NITERS;			// Maximum number of iterations per run.
 	index_t l_niter_test_conv = DEFAULT_NITER_CONV;		// Number of iterations before testing convergence.
@@ -907,7 +909,7 @@ int check_arguments( int argc, char const *restrict *restrict argv, bool *restri
 	 */
 
 	// NOTE: First colon (':') indicates to return ':', instead of '?', in case of a missing option argument.
-	while ( (opt = getopt( argc, (char *const *) argv, ":B:b:CcE:e:HhI:i:J:j:K:k:RrT:t:Z:z:" ) ) != -1 ) {
+	while ( (opt = getopt( argc, (char *const *) argv, ":B:b:CcE:e:HhI:i:J:j:K:k:S:s:RrT:t:Z:z:" ) ) != -1 ) {
 
 		switch( opt ) {
 
@@ -1004,6 +1006,15 @@ int check_arguments( int argc, char const *restrict *restrict argv, bool *restri
 				l_k = (index_t) val;
 				l_kp = get_padding( val );
 			} break; // k
+
+			// PRNG seed
+			case 'S':
+			case 's': {
+				errno = 0;
+				char *endptr = NULL;
+				intmax_t const val = strtoimax( optarg, &endptr, 10 );
+				l_seed = (index_t) val;
+			} break; // s
 
 
 			// Input file has numeric row labels
@@ -1102,6 +1113,7 @@ int check_arguments( int argc, char const *restrict *restrict argv, bool *restri
 
 	l_arguments.k = l_k;
 	l_arguments.kp = l_kp;
+	l_arguments.seed = l_seed;
 	l_arguments.nIters = l_nIters;
 	l_arguments.niter_test_conv = l_niter_test_conv;
 	l_arguments.stop_threshold = l_stop_threshold;

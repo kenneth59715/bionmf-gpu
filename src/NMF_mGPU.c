@@ -1567,7 +1567,7 @@ static int sync_GPU_matrix( real *restrict A, real *restrict d_A, index_t nrows,
  *
  * Return EXIT_SUCCESS or EXIT_FAILURE.
  */
-static int nmf( index_t nIters, index_t niter_test_conv, index_t stop_threshold )
+static int nmf( index_t nIters, index_t niter_test_conv, index_t stop_threshold, index_t Seed )
 {
 
 	#if NMFGPU_DEBUG || (! NMFGPU_PROFILING_GLOBAL)
@@ -1597,7 +1597,14 @@ static int nmf( index_t nIters, index_t niter_test_conv, index_t stop_threshold 
 
 	// Initializes the random-number generator.
 	{
-		index_t const seed = get_seed();
+		index_t seed;
+		// this might have the bug where Seed=0 runs get_seed()
+		if (Seed) {
+			seed = Seed;
+		} else {
+			seed = get_seed();
+		}
+		print_message( shown_by_all, "\nUsing seed: %" PRI_IDX "\n", seed );
 
 		/* The master process broadcasts the seed in order to have
 		 * coherent initial values within all (active) processes.
@@ -2686,6 +2693,7 @@ int main( int argc, char *argv[] )
 	file_fmt_t const output_file_fmt = arguments.output_file_fmt;	// Output file format.
 	K = arguments.k;						// Factorization rank.
 	Kp = arguments.kp;						// Padded factorization rank.
+	Seed = arguments.seed;                                          // PRNG seed or NULL.
 	index_t const nIters = arguments.nIters;			// Maximum number of iterations per run.
 	index_t const niter_test_conv = arguments.niter_test_conv;	// Number of iterations before testing convergence.
 	index_t const stop_threshold = arguments.stop_threshold;	// Stopping criterion.
@@ -2882,7 +2890,7 @@ int main( int argc, char *argv[] )
 
 	// Executes the NMF Algorithm
 
-	status = nmf( nIters, niter_test_conv, stop_threshold );
+	status = nmf( nIters, niter_test_conv, stop_threshold, Seed );
 	if ( status != EXIT_SUCCESS ) {
 		clean_matrix_tags( mt );
 		finalize_NMF();

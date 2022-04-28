@@ -52,7 +52,7 @@
 
 // Fixed seed for the random-values generator.
 #ifndef FIXED_SEED
-	#define FIXED_SEED ( INDEX_C(3) )
+	#define FIXED_SEED ( INDEX_C(0) )
 #endif
 
 // ---------------------------------------------

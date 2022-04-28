@@ -194,6 +194,7 @@ struct input_arguments {
 
 	index_t k;			// Starting factorization rank.
 	index_t kp;			// Padded factorization rank.
+	index_t seed;                   // PRNG seed.
 	index_t nIters;			// Maximum number of iterations per run.
 	index_t niter_test_conv;	// Number of iterations before testing convergence.
 	index_t stop_threshold;		// Stopping criterion.
@@ -222,6 +223,7 @@ extern index_t matrix_max_non_padded_dim;	// Maximum non-padded dimension.
 extern index_t N;	// Number of rows of input matrix V.
 extern index_t M;	// Number of columns of input matrix V.
 extern index_t K;	// Factorization rank.
+extern index_t Seed;  // PRNG seed.
 
 // Dimensions for multi-process version:
 extern index_t NpP;	// Number of rows of V assigned to this process (NpP <= N).

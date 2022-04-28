@@ -125,7 +125,8 @@ cuda_lib="${cuda_home}/lib"
 if [ ! -d "${cuda_lib}" ] ; then
 
 	# 32- or 64-bits platform
-	os_size=$(uname -m | sed -e "s/i.86/32/" -e "s/x86_64/64/" -e "s/armv7l/32/")
+	# ppc64le
+	os_size=$(uname -m | sed -e "s/ppc64le/64/" -e "s/i.86/32/" -e "s/x86_64/64/" -e "s/armv7l/32/")
 
 	if [ ! -d "${cuda_lib}${os_size}" ] ; then	# e.g., <cuda_home>/lib64
 		echo "Warning: Neither of '${cuda_lib}' or '${cuda_lib}${os_size}' were found, so not added to (DY)LD_LIBRARY_PATH." >&2
