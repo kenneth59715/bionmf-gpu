@@ -1,0 +1,25 @@
+To build and run:
+
+- git clone the bionmf-gpu repo
+
+- create a working directory to serve a the top level of the jobs.
+
+- from the repo, cp test/ALL_AML_data.txt to the working directory.
+
+- reference makeit.template to create a script to run make in the
+  bionmf-gpu repo.  Set BIONMFGPUPATH to the path to the repo.
+  This will generate a bunch of warnings, but should also create
+  bin/NMF_mGPU in the repo
+
+- reference testjob.template to create an LSF job script.  Set these:
+export WORKINGDIR=<path to desired working directory>
+export BIONMFGPUPATH=<path to bionmf-gpu repo>
+export CONSENSUSPY=<path to consensus.py>
+export PYVENVPATH=<path to python venv>
+
+- submit the job with bsub.  The job should create a jobdir.$JOB_ID
+  directory under the working directory.  The consensus matrix should
+  get printed in stdout.
+
+- https://docs.scipy.org/doc/scipy-1.1.0/reference/building/linux.html
+scipy needed for numpy, no binary package for power9.

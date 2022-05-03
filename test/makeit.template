@@ -1,0 +1,17 @@
+#!/bin/sh
+#Currently Loaded Modules:
+#  1) lsf-tools/2.0   4) spectrum-mpi/10.4.0.3-20210112   7) cuda/11.0.3
+#    2) DefApps         5) nsight-compute/2021.2.1
+#      3) gcc/9.1.0       6) nsight-systems/2021.3.1.54
+
+export BIONMFGPUPATH=<path to bionmf-gpu repo>
+module load gcc
+module load cuda
+. ${BIONMFGPUPATH}/env.sh ${CUDA_PATH}
+export SM_VERSIONS="70 70 PTX70"
+export DBG=1
+unset DBG
+export VERBOSE=3
+unset VERBOSE
+#export SYNC_TRANSF=1
+make multi_gpu MPICC=`which mpicc`

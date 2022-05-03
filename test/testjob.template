@@ -1,0 +1,29 @@
+#!/bin/bash
+# Begin LSF Directives
+#BSUB -P TRN008
+#BSUB -W 00:50
+#BSUB -nnodes 1
+#BSUB -alloc_flags gpumps
+#BSUB -J NMF-nondebug
+#BSUB -o NMF.out.%J
+#BSUB -e NMF.err.%J
+
+export WORKINGDIR=<path to the working dir>
+export BIONMFGPUPATH=<path to the bio-nmf repo>
+export CONSENSUSPY=<path to consensus.py>
+export GPUPROGRAMPATH=${BIONMFGPUPATH}/bin/NMF_mGPU
+export PYVENVPATH=<path to python venv>
+module load gcc
+module load cuda
+module load python
+. ${PVENVPATH}/bin/activate
+. ${BIONMFGPUPATH}/env.sh ${CUDA_PATH}
+cd ${WORKINGDIR}
+mkdir jobdir.${LSB_JOBID}
+export NUMTASKS=4
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+echo CUDA_VISIBLE_DEVICES $CUDA_VISIBLE_DEVICES
+nvidia-smi
+date
+${CONSENSUSPY} --gpuprogrampath=${GPUPROGRAMPATH} --jobdir=${WORKINGDIR}/jobdir.${LSB_JOBID} --inputfile=${WORKINGDIR}/ALL_AML_data.gct --mink=2 --maxk=4 --startseed=1 --seeds=100 --consecutive=40 --maxiterations=2000 --outputfileprefix=ALL_AML_data --interval=10 --keepintermediatefiles --numtasks=${NUMTASKS}
+date
