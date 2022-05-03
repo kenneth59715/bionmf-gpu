@@ -37,6 +37,8 @@ import shlex
 import matplotlib.pyplot as plt
 import gp.data
 import pandas
+#import scipy.cluster.hierarchy
+#import scipy.spatial.distance
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -138,6 +140,10 @@ try:
     consensusdf.set_axis(indexlist, axis='index', inplace=True)
     consensusdf = emptydf.append(consensusdf)
     gp.data.write_gct(consensusdf,'{}/{}.consensus.k.{}.gct'.format(JOBDIR,args.outputfileprefix,k))
+#    linkage_mat = scipy.cluster.hierarchy.linkage(together_counts)
+#    cdm = scipy.spatial.distance.pdist(together_counts)
+#    cophenetic_correlation_distance, cophenetic_distance_matrix = scipy.cluster.hierarchy.cophenet(linkage_mat, cdm)
+#   print('k={}, cophenetic_correlation_distance: ({})'.format(k,cophenetic_correlation_distance))
 except:
   print("Unexpected error:", sys.exc_info()[0])
   if args.nocleanup == True:
