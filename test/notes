@@ -21,5 +21,5 @@ export PYVENVPATH=<path to python venv>
   directory under the working directory.  The consensus matrix should
   get printed in stdout.
 
-- https://docs.scipy.org/doc/scipy-1.1.0/reference/building/linux.html
+- https://docs.scipy.org/doc/scipy/building/linux.html
 scipy needed for numpy, no binary package for power9.
