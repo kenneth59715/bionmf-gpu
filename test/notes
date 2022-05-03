@@ -4,7 +4,7 @@ To build and run:
 
 - create a working directory to serve a the top level of the jobs.
 
-- from the repo, cp test/ALL_AML_data.txt to the working directory.
+- from the repo, cp test/ALL_AML_data.gct to the working directory.
 
 - reference makeit.template to create a script to run make in the
   bionmf-gpu repo.  Set BIONMFGPUPATH to the path to the repo.
